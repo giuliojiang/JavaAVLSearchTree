@@ -32,11 +32,13 @@ public class AVL<K extends Comparable<K>, V> implements BSTInterface<K, V>
             return leaf;
         } else if (key.compareTo(node.key) < 0)
         {
-            node.setLeft(addHelper(node.left, key, value));
+            Node<K,V> newLeft = addHelper(node.left, key, value);
+            node.setLeft(rebalance(newLeft));
             return node;
         } else if (key.compareTo(node.key) > 0)
         {
-            node.setRight(addHelper(node.right, key, value));
+            Node<K,V> newRight = addHelper(node.right, key, value);
+            node.setRight(rebalance(newRight));
             return node;
         } else // (key.compareTo(node.key) == 0)
         {
@@ -72,6 +74,50 @@ public class AVL<K extends Comparable<K>, V> implements BSTInterface<K, V>
      * @param start
      * @return
      */
+//    private Node<K,V> rebalance(Node<K,V> start)
+//    {
+//        if (start == null)
+//            return null;
+//        
+//        System.out.println("Analyzing " + start);
+//        
+//        int lh = getHeight(start.left);
+//        int rh = getHeight(start.right);
+//        System.out.println(lh + "\t" + rh);
+//        
+//        if (lh == rh) // case 1
+//        {
+//            System.out.println("Case1");
+//            return start;
+//        } else if (lh == 0 && rh == 2) // case 2
+//        {
+//            System.out.println("Case2");
+//            return rotateLeft(start);
+//        } else if (lh == 2 && rh == 0) // case 3
+//        {
+//            System.out.println("Case3");
+//            return rotateRight(start);
+//        } else if (lh == 1 && rh == 3) // case 4
+//        {
+//            System.out.println("Case4");
+//            return rotateRightLeft(start);
+//        } else if (lh == 3 && rh == 1) // case 5
+//        {
+//            System.out.println("Case5");
+//            return rotateLeftRight(start);
+//        } else if (lh > rh) // case 6
+//        {
+//            System.out.println("Case6");
+//            start.setLeft(rebalance(start.left));
+//            return start;
+//        } else // (rh > lh) // case 7
+//        {
+//            System.out.println("Case7");
+//            start.setRight(rebalance(start.right));
+//            return start;
+//        }
+//    }
+    
     private Node<K,V> rebalance(Node<K,V> start)
     {
         if (start == null)
@@ -79,41 +125,49 @@ public class AVL<K extends Comparable<K>, V> implements BSTInterface<K, V>
         
         System.out.println("Analyzing " + start);
         
-        int lh = getHeight(start.left);
-        int rh = getHeight(start.right);
-        System.out.println(lh + "\t" + rh);
+        int ch = calculateHeightDifference(start);
         
-        if (lh == rh) // case 1
+        if (ch == 0)
         {
-            System.out.println("Case1");
             return start;
-        } else if (lh == 0 && rh == 2) // case 2
+        } else if (ch > 1) // left is taller
         {
-            System.out.println("Case2");
-            return rotateLeft(start);
-        } else if (lh == 2 && rh == 0) // case 3
+            int gch = calculateHeightDifference(start.left);
+            if (gch < 0) // right is taller
+            {
+                return rotateLeftRight(start);
+            } else
+            {
+                return rotateRight(start);
+            }
+        } else if (ch < -1) // right is taller
         {
-            System.out.println("Case3");
-            return rotateRight(start);
-        } else if (lh == 1 && rh == 3) // case 4
+            int gch = calculateHeightDifference(start.right);
+            if (gch > 0) //  left is taller
+            {
+                return rotateRightLeft(start);
+            } else
+            {
+                return rotateLeft(start);
+            }
+        } else
         {
-            System.out.println("Case4");
-            return rotateRightLeft(start);
-        } else if (lh == 3 && rh == 1) // case 5
-        {
-            System.out.println("Case5");
-            return rotateLeftRight(start);
-        } else if (lh > rh) // case 6
-        {
-            System.out.println("Case6");
-            start.setLeft(rebalance(start.left));
-            return start;
-        } else // (rh > lh) // case 7
-        {
-            System.out.println("Case7");
-            start.setRight(rebalance(start.right));
             return start;
         }
+    }
+    
+    private int calculateHeightDifference(Node<K,V> node)
+    {
+        if (node == null)
+            return 0;
+        
+        Node<K,V> l = node.left;
+        Node<K,V> r = node.right;
+        
+        int lh = getHeight(l);
+        int rh = getHeight(r);
+        
+        return lh - rh;
     }
     
     
@@ -189,11 +243,11 @@ public class AVL<K extends Comparable<K>, V> implements BSTInterface<K, V>
     {
         if (node == null)
         {
-            System.out.println("===   getheight " + "null" + " " + 0);
+            // System.out.println("===   getheight " + "null" + " " + 0);
             return 0;
         } else
         {
-            System.out.println("===   getheight " + node.toString() + " " + node.height);
+            // System.out.println("===   getheight " + node.toString() + " " + node.height);
             return node.height;
         }
     }
@@ -204,7 +258,7 @@ public class AVL<K extends Comparable<K>, V> implements BSTInterface<K, V>
         if (root == null)
             return "null";
         
-        return root.getString(root);
+        return root.getString(root) + "\n" + root.heightString(root);
     }
     
     
@@ -294,6 +348,14 @@ public class AVL<K extends Comparable<K>, V> implements BSTInterface<K, V>
             out.append("[" + getString(left) + "]");
             out.append("[" + getString(right) + "]");
             return out.toString();
+        }
+        
+        private String heightString(Node<K,V> n)
+        {
+            if (n == null)
+                return "";
+            
+            return n.key + ":" + n.height + "\n" + heightString(n.left) + heightString(n.right);
         }
         
     }
