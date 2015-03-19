@@ -22,6 +22,12 @@ public class Test
         
         t.add(100, 1);
         System.out.println(t + "\n");
+        
+        t.remove(80);
+        System.out.println(t + "\n");
+        
+        t.remove(60);
+        System.out.println(t + "\n");
 //        
 //        t.add(10, 1);
 //        t.add(40, 1);
@@ -29,13 +35,13 @@ public class Test
 //        t.add(55, 1);
 //        System.out.println(t + "\n");
 //        
-        t = new AVL<Integer,Integer>();
-        Random r = new Random();
-        for (int i = 0; i < 16; i++)
-        {
-            t.add(r.nextInt(50), 1);
-        }
-        System.out.println(t + "\n");
+//        t = new AVL<Integer,Integer>();
+//        Random r = new Random();
+//        for (int i = 0; i < 16; i++)
+//        {
+//            t.add(r.nextInt(50), 1);
+//        }
+//        System.out.println(t + "\n");
     }
     
 }

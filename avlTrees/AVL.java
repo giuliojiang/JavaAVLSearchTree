@@ -64,8 +64,91 @@ public class AVL<K extends Comparable<K>, V> implements BSTInterface<K, V>
     @Override
     public void remove(K key)
     {
-        // TODO Auto-generated method stub
+        root = deleteElem(root, key);
+    }
+    
+    private Node<K,V> deleteElem(Node<K,V> node, K key)
+    {
+        if (node == null)
+            throw new RuntimeException();
         
+        if (key.compareTo(node.key) == 0)
+        {
+            node = deleteNode(node);
+            return rebalance(node);
+        } else if (key.compareTo(node.key) < 0)
+        {
+            node.setLeft(deleteElem(node.left, key));
+            return rebalance(node);
+        } else
+        {
+            node.setRight(deleteElem(node.right, key));
+            return rebalance(node);
+        }
+    }
+    
+    private Node<K,V> deleteNode(Node<K,V> node)
+    {
+        if (node == null)
+            return null;
+        
+        if (isLeaf(node))
+        {
+            return null;
+        } else if (hasOnlyLeft(node))
+        {
+            return node.left;
+        } else if (hasOnlyRight(node))
+        {
+            return node.right;
+        } else
+        {
+            Node<K,V> replacement = findRightMost(node.left);
+            node.setLeft(deleteRightMost(node.left));
+            replacement.setLeft(node.left);
+            replacement.setRight(node.right);
+            node = null;
+            return replacement;
+        }
+        
+    }
+    
+    private boolean isLeaf(Node<K,V> node)
+    {
+        return node.left == null && node.right == null;
+    }
+    
+    private boolean hasOnlyLeft(Node<K,V> node)
+    {
+        return node.left != null && node.right == null;
+    }
+    
+    private boolean hasOnlyRight(Node<K,V> node)
+    {
+        return node.right != null && node.left == null;
+    }
+    
+    private Node<K,V> findRightMost(Node<K,V> node)
+    {
+        if (node.right == null)
+        {
+            return node;
+        } else
+        {
+            return findRightMost(node.right);
+        }
+    }
+    
+    private Node<K,V> deleteRightMost(Node<K,V> node)
+    {
+        if (node.right == null)
+        {
+            return node.left;
+        } else
+        {
+            node.setRight(deleteRightMost(node.right));
+            return node;
+        }
     }
     
     /** =======================================================
@@ -74,50 +157,6 @@ public class AVL<K extends Comparable<K>, V> implements BSTInterface<K, V>
      * @param start
      * @return
      */
-//    private Node<K,V> rebalance(Node<K,V> start)
-//    {
-//        if (start == null)
-//            return null;
-//        
-//        System.out.println("Analyzing " + start);
-//        
-//        int lh = getHeight(start.left);
-//        int rh = getHeight(start.right);
-//        System.out.println(lh + "\t" + rh);
-//        
-//        if (lh == rh) // case 1
-//        {
-//            System.out.println("Case1");
-//            return start;
-//        } else if (lh == 0 && rh == 2) // case 2
-//        {
-//            System.out.println("Case2");
-//            return rotateLeft(start);
-//        } else if (lh == 2 && rh == 0) // case 3
-//        {
-//            System.out.println("Case3");
-//            return rotateRight(start);
-//        } else if (lh == 1 && rh == 3) // case 4
-//        {
-//            System.out.println("Case4");
-//            return rotateRightLeft(start);
-//        } else if (lh == 3 && rh == 1) // case 5
-//        {
-//            System.out.println("Case5");
-//            return rotateLeftRight(start);
-//        } else if (lh > rh) // case 6
-//        {
-//            System.out.println("Case6");
-//            start.setLeft(rebalance(start.left));
-//            return start;
-//        } else // (rh > lh) // case 7
-//        {
-//            System.out.println("Case7");
-//            start.setRight(rebalance(start.right));
-//            return start;
-//        }
-//    }
-    
     private Node<K,V> rebalance(Node<K,V> start)
     {
         if (start == null)
