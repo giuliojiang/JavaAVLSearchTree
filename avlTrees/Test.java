@@ -14,7 +14,7 @@ public class Test
         System.out.println(t + "\n");
         
         t.add(80, 1);
-        t.add(90, 1);
+        t.add(90, 45);
         System.out.println(t + "\n");
         
         t.add(70, 1);
@@ -28,6 +28,8 @@ public class Test
         
         t.remove(60);
         System.out.println(t + "\n");
+        
+        System.out.println(t.get(90));
 //        
 //        t.add(10, 1);
 //        t.add(40, 1);

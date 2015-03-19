@@ -14,5 +14,6 @@ implemented.
 The rebalancing algorithm produces almost-balancing 
 trees. I'll try to fix that.
 
-I will add the other delete and get methods shortly.
+Remove and get methods have been implemented,
+but not thoroughly tested.
 ```

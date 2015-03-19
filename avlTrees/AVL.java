@@ -54,8 +54,24 @@ public class AVL<K extends Comparable<K>, V> implements BSTInterface<K, V>
     @Override
     public V get(K key)
     {
-        // TODO Auto-generated method stub
-        return null;
+        return getNode(root,key).value;
+    }
+    
+    public Node<K,V> getNode(Node<K,V> node, K key)
+    {
+        if (node == null)
+            throw new RuntimeException("element not found");
+        
+        if (key.compareTo(node.key) == 0)
+        {
+            return node;
+        } else if (key.compareTo(node.key) < 0)
+        {
+            return getNode(node.left, key);
+        } else
+        {
+            return getNode(node.right, key);
+        }
     }
 
     /* (non-Javadoc) ============================================
