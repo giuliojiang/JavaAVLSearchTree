@@ -33,13 +33,13 @@ public class AVL<K extends Comparable<K>, V> implements BSTInterface<K, V>
         } else if (key.compareTo(node.key) < 0)
         {
             Node<K,V> newLeft = addHelper(node.left, key, value);
-            node.setLeft(rebalance(newLeft));
-            return node;
+            node.setLeft(newLeft);
+            return rebalance(node);
         } else if (key.compareTo(node.key) > 0)
         {
             Node<K,V> newRight = addHelper(node.right, key, value);
-            node.setRight(rebalance(newRight));
-            return node;
+            node.setRight(newRight);
+            return rebalance(node);
         } else // (key.compareTo(node.key) == 0)
         {
             node.value = value;
